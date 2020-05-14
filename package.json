@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "arg": "^4.1.3",
+    "chalk": "^4.0.0",
+    "form-data": "^3.0.0",
+    "fs-extra": "^9.0.0",
+    "node-fetch": "^2.6.0",
+    "prompt-confirm": "^2.0.4"
+  },
+  "name": "neocel",
+  "version": "0.0.1",
+  "description": "A command-line tool to deploy static sites to Neocities",
+  "main": "index.js",
+  "repository": "https://github.com/kognise/neocel",
+  "author": "Kognise <hi@kognise.dev>",
+  "license": "UNLICENSED",
+  "private": false,
+  "bin": {
+    "neocel": "./index.js"
+  },
+  "tags": [
+    "deploy",
+    "ci",
+    "static",
+    "neocities",
+    "cli"
+  ]
+}
