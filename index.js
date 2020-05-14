@@ -30,16 +30,15 @@ const getFlatPaths = async (path, prefix = '') => {
 	return paths
 }
 
-const deploy = async (directory, token) => {
+const deploy = async (directory, token, skipPrompts) => {
   try {
     console.log(chalk.gray(`Deploying ${pathLib.resolve(directory)}`))
 
     const prompt = new Confirm('This will wipe your existing site, continue?')
-    const shouldContinue = await prompt.run()
+    const shouldContinue = skipPrompts ? true : await prompt.run()
     if (!shouldContinue) {
       console.log(chalk.red('Deployment aborted'))
       process.exit(1)
-      return
     }
 
     console.log()
@@ -130,5 +129,5 @@ Get your token with \`${chalk.cyan('neocel token <username> <password>')}\`
     process.exit(1)
   }
 
-  deploy(directory, token)
+  deploy(directory, token, args['--yes'])
 }
