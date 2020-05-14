@@ -8,7 +8,7 @@
     "prompt-confirm": "^2.0.4"
   },
   "name": "neocel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A command-line tool to deploy static sites to Neocities",
   "main": "index.js",
   "repository": "https://github.com/kognise/neocel",
