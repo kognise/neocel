@@ -6,7 +6,29 @@ const pathLib = require('path')
 const chalk = require('chalk')
 const arg = require('arg')
 const fetch = require('node-fetch')
+const fs = require('fs-extra')
 const package = require('./package.json')
+
+const supportedExtensions = 'asc atom bin css csv dae eot epub geojson gif gltf htm html ico jpeg jpg js json key kml knowl less manifest markdown md mf mid midi mtl obj opml otf pdf pgp png rdf rss sass scss svg text tsv ttf txt webapp webmanifest webp woff woff2 xcf xml'.split(' ')
+
+const getFlatPaths = async (path, prefix = '') => {
+	let paths = []
+
+	const thesePaths = await fs.readdir(pathLib.join(prefix, path))
+	for (let innerPath of thesePaths) {
+		const innerName = pathLib.join(prefix, path, innerPath)
+		const stats = await fs.stat(innerName)
+
+		if (stats.isDirectory()) {
+			const theseFlatPaths = await getFlatPaths(innerPath, pathLib.join(prefix, path))
+			paths = [ ...paths, ...theseFlatPaths.map((flatPath) => pathLib.join(innerPath, flatPath)) ]
+		} else {
+			paths.push(innerPath)
+		}
+	}
+
+	return paths
+}
 
 const deploy = async (directory, token) => {
   try {
@@ -26,8 +48,21 @@ const deploy = async (directory, token) => {
     await api.wipe()
     console.log(chalk.green('Done!'))
 
+    process.stdout.write(chalk.gray('Crawling directory... '))
+    const listing = await getFlatPaths(directory)
+    const filteredListing = listing.filter((file) => supportedExtensions.includes(file.split('.').reverse()[0].toLowerCase()))
+    const elimintated = listing.length - filteredListing.length
+    if (elimintated !== 0) {
+      console.log(chalk.yellow(`${elimintated} file${elimintated === 1 ? '' : 's'} were unsupported, this is probably fine`))
+    } else {
+      console.log(chalk.green('Done!'))
+    }
+
     process.stdout.write(chalk.gray('Uploading new files... '))
-    await api.uploadDirectory(directory)
+    await api.uploadFiles(filteredListing.reduce((acc, file) => {
+			acc[file] = fs.createReadStream(pathLib.join(directory, file))
+			return acc
+		}, {}))
     console.log(chalk.green('Done!'))
 
     console.log()

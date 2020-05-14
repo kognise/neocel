@@ -1,26 +1,5 @@
 const fetch = require('node-fetch')
-const fs = require('fs-extra')
-const pathLib = require('path')
 const FormData = require('form-data')
-
-const getFlatPaths = async (path, prefix = '') => {
-	let paths = []
-
-	const thesePaths = await fs.readdir(pathLib.join(prefix, path))
-	for (let innerPath of thesePaths) {
-		const innerName = pathLib.join(prefix, path, innerPath)
-		const stats = await fs.stat(innerName)
-
-		if (stats.isDirectory()) {
-			const theseFlatPaths = await getFlatPaths(innerPath, pathLib.join(prefix, path))
-			paths = [ ...paths, ...theseFlatPaths.map((flatPath) => pathLib.join(innerPath, flatPath)) ]
-		} else {
-			paths.push(innerPath)
-		}
-	}
-
-	return paths
-}
 
 module.exports = class NeocitiesAPI {
 	constructor(apiKey) {
@@ -94,14 +73,6 @@ module.exports = class NeocitiesAPI {
 		}))
 		if (uploadable.length === 0) return
 		await this.post('upload', uploadable)
-	}
-
-	async uploadDirectory(path) {
-		const listing = await getFlatPaths(path)
-		await this.uploadFiles(listing.reduce((acc, file) => {
-			acc[file] = fs.createReadStream(pathLib.join(path, file))
-			return acc
-		}, {}))
 	}
 
 	async getUrl() {
