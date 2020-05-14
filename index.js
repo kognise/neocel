@@ -38,6 +38,7 @@ const deploy = async (directory, token) => {
     const shouldContinue = await prompt.run()
     if (!shouldContinue) {
       console.log(chalk.red('Deployment aborted'))
+      process.exit(1)
       return
     }
 
@@ -69,6 +70,7 @@ const deploy = async (directory, token) => {
     console.log(`Deployment completed, view it at ${chalk.blue(await api.getUrl())}`)
   } catch (error) {
     console.log(chalk.red(`Error! ${error.message}`))
+    process.exit(1)
   }
 }
 
@@ -105,7 +107,7 @@ Get your token with \`${chalk.cyan('neocel token <username> <password>')}\`
   const [ , username, password ] = args._
   if (!username || !password) {
     console.log(chalk.red('You must specify a username and password'))
-    return
+    process.exit(1)
   }
 
   ;(async () => {
@@ -114,6 +116,7 @@ Get your token with \`${chalk.cyan('neocel token <username> <password>')}\`
 
     if (!json.api_key) {
       console.log(chalk.red('There was an error generating your token'))
+      process.exit(1)
     } else {
       console.log(`Your token is ${chalk.blue(json.api_key)}`)
     }
@@ -124,7 +127,7 @@ Get your token with \`${chalk.cyan('neocel token <username> <password>')}\`
 
   if (!token) {
     console.log(chalk.red('You must specify a token either through the NEOCITIES_TOKEN environment variable or the -t tag'))
-    return
+    process.exit(1)
   }
 
   deploy(directory, token)
