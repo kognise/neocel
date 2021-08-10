@@ -1,3 +1,7 @@
+> 🚧 **This project is maintenance mode!** 🚧
+> 
+> I will be fixing and responding to pull requests and issues, but it is not in active development.
+
 # Neocel
 
 A command-line tool to quickly deploy static sites to Neocities. Free web hosting = stonks!
