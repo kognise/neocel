@@ -1,5 +1,6 @@
 const fetch = require('node-fetch')
 const FormData = require('form-data')
+const pathLib = require('path')
 
 module.exports = class NeocitiesAPI {
 	constructor(apiKey) {
@@ -68,7 +69,7 @@ module.exports = class NeocitiesAPI {
 
 	async uploadFiles(files) {
 		const uploadable = Object.keys(files).map((path) => ({
-			key: path,
+			key: path.replace(/\\/g, '/'),
 			value: files[path]
 		}))
 		if (uploadable.length === 0) return
